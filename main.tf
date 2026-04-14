@@ -6,6 +6,12 @@ terraform {
       version = ">= 3.0.0"  # or a specific newer version
     }
   }
+  backend "azurerm" {
+    resource_group_name = "1-a2193887-playground-sandbox"
+    storage_account_name = "stellarstate1776163513"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
 }
 
 provider "azurerm" {
