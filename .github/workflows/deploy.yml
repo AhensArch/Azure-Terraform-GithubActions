@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
+      # These set the global env for Terraform
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -20,13 +21,16 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Azure Login
-      # Using the explicit long-form flags to avoid ambiguity
+      # Mapping secrets to local shell variables makes the 'az login' command much more stable
+      env:
+        SP_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        SP_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       run: |
         az login --service-principal \
-          --username "${{ secrets.AZURE_CLIENT_ID }}" \
-          --password "${{ secrets.AZURE_CLIENT_SECRET }}" \
-          --tenant "${{ secrets.AZURE_TENANT_ID }}"
-        az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          --username "$SP_ID" \
+          --password "$SP_SECRET" \
+          --tenant "$TENANT_ID"
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
