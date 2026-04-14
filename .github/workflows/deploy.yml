@@ -23,6 +23,7 @@ jobs:
       uses: hashicorp/setup-terraform@v3
 
     - name: Terraform Init
+      # This forces the backend to use the Service Principal instead of 'az login'
       run: |
         terraform init \
           -backend-config="client_id=${{ secrets.AZURE_CLIENT_ID }}" \
