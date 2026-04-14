@@ -19,17 +19,20 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    # NEW STEP: Manually log in the runner to create a CLI session
+    - name: Azure CLI Login
+      run: |
+        az login --service-principal \
+          -u ${{ secrets.AZURE_CLIENT_ID }} \
+          -p ${{ secrets.AZURE_CLIENT_SECRET }} \
+          --tenant ${{ secrets.AZURE_TENANT_ID }}
+        az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
 
     - name: Terraform Init
-      # This forces the backend to use the Service Principal instead of 'az login'
-      run: |
-        terraform init \
-          -backend-config="client_id=${{ secrets.AZURE_CLIENT_ID }}" \
-          -backend-config="client_secret=${{ secrets.AZURE_CLIENT_SECRET }}" \
-          -backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-          -backend-config="tenant_id=${{ secrets.AZURE_TENANT_ID }}"
+      run: terraform init
 
     - name: Terraform Plan
       run: terraform plan
