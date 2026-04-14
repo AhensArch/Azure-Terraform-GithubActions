@@ -11,7 +11,7 @@ permissions:
 
 jobs:
     terraform:
-        name: 'Terraform Apply'
+        name: 'Terraform'
         runs-on: ubuntu-latest
 
         #These env vars will tell terraform how to log in
